@@ -7,15 +7,19 @@ plugins {
 	kotlin("plugin.spring") version "1.4.30"
 }
 
-group = "com.shut"
+group = "com.example"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
 	mavenCentral()
 }
 
 dependencies {
+	implementation(platform("com.google.cloud:libraries-bom:20.1.0"))
+	implementation("com.google.cloud:google-cloud-vision")
+	implementation(platform("software.amazon.awssdk:bom:2.16.52"))
+	implementation("software.amazon.awssdk:rekognition")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -27,7 +31,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
+		jvmTarget = "1.8"
 	}
 }
 

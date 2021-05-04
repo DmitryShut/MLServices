@@ -1,1 +1,1 @@
-rootProject.name = "mlservice"
+rootProject.name = "demo"
