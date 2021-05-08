@@ -1,8 +1,8 @@
 package com.shut.mlservice.providers
 
-import com.shut.mlservice.BoundingRectangle
-import com.shut.mlservice.Coordinate
-import com.shut.mlservice.DetectedObject
+import com.shut.mlservice.model.BoundingRectangle
+import com.shut.mlservice.model.Coordinate
+import com.shut.mlservice.model.DetectedObject
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.SdkBytes

@@ -1,6 +1,6 @@
 package com.shut.mlservice.service
 
-import com.shut.mlservice.DetectedObject
+import com.shut.mlservice.model.DetectedObject
 import com.shut.mlservice.providers.AmazonProvider
 import com.shut.mlservice.providers.GoogleProvider
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package com.shut.mlservice
+package com.shut.mlservice.model
 
 data class Coordinate(
     val x: Int,

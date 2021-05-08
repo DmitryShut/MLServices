@@ -1,4 +1,4 @@
-package com.shut.mlservice
+package com.shut.mlservice.model
 
 data class BoundingRectangle(
     val topLeftCorner: Coordinate,
