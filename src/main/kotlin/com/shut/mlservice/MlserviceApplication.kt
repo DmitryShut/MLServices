@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class MlserviceApplication
 
 fun main(args: Array<String>) {
-	runApplication<MlserviceApplication>(*args)
+
+    runApplication<MlserviceApplication>(*args)
 }

@@ -10,14 +10,14 @@ import org.springframework.web.multipart.MultipartFile
 class DetectionService(private val googleProvider: GoogleProvider, private val amazonProvider: AmazonProvider) {
 
     fun detectObjects(file: MultipartFile, provider: String): List<DetectedObject> =
-        when(provider){
+        when (provider) {
             "google" -> googleProvider.detectObjects(file)
             "amazon" -> amazonProvider.detectObjects(file)
             else -> listOf()
         }
 
     fun detectText(file: MultipartFile, provider: String): List<DetectedObject> =
-        when(provider){
+        when (provider) {
             "google" -> googleProvider.detectText(file)
             "amazon" -> amazonProvider.detectText(file)
             else -> listOf()
