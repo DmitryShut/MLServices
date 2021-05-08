@@ -1,11 +1,13 @@
 package com.shut.mlservice.security
 
 import com.shut.mlservice.service.UserService
-import io.jsonwebtoken.*
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.JwtParser
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.io.Serializable
@@ -61,16 +63,11 @@ class TokenProvider(private val userService: UserService) : Serializable {
     }
 
     fun getAuthentication(
-        token: String?,
-        existingAuthentication: Authentication?,
-        userDetails: UserDetails?
+        token: String
     ): UsernamePasswordAuthenticationToken {
         val jwtParser: JwtParser = Jwts.parser().setSigningKey(SecurityJwtConstants.SIGNING_KEY)
-        val claimsJws: Jws<Claims> = jwtParser.parseClaimsJws(token)
-        val claims: Claims = claimsJws.getBody()
-        val authorities: Collection<GrantedAuthority> =
-            claims[SecurityJwtConstants.AUTHORITIES_KEY].toString().split(",")
-                .map { role: String? -> SimpleGrantedAuthority(role) }
-        return UsernamePasswordAuthenticationToken(userDetails, "", authorities)
+        val body = jwtParser.parseClaimsJws(token).body
+        val userDetails = userService.loadUserByUsername(body.subject)
+        return UsernamePasswordAuthenticationToken(userDetails, "")
     }
 }

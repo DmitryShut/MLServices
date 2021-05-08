@@ -6,7 +6,6 @@ import com.shut.mlservice.security.TokenProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -50,9 +49,8 @@ class WebSecurityConfig(
     public override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/user").permitAll()
             .antMatchers("/api/**").authenticated()
-            .antMatchers("/token/**").permitAll()
+            .antMatchers("/auth/**").permitAll()
             .and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
             .and()
