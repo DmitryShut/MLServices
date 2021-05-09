@@ -5,5 +5,4 @@ object SecurityJwtConstants {
     const val SIGNING_KEY = "sign"
     const val TOKEN_PREFIX = "Bearer"
     const val HEADER_STRING = "Authorization"
-    const val AUTHORITIES_KEY = "scopes"
 }

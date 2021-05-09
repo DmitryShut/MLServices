@@ -17,7 +17,7 @@ class UserService(
 
     fun findById(id: String) = userRepository.findById(id)
 
-    fun findByUsername(id: String) = userRepository.findByUsername(id)
+    fun findByUsername(username: String) = userRepository.findByUsername(username)
 
     fun save(user: User) = userRepository.save(user.let { user1 ->
         User(

@@ -29,23 +29,20 @@ class WebSecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
-    @Throws(Exception::class)
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
 
     @Autowired
-    @Throws(Exception::class)
     fun globalUserDetails(auth: AuthenticationManagerBuilder) {
         auth.userDetailsService(customUserDetailsService).passwordEncoder(bCryptPasswordEncoder)
     }
 
     @Bean
     fun authenticationTokenFilterBean(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(tokenProvider, customUserDetailsService)
+        return JwtAuthenticationFilter(tokenProvider)
     }
 
-    @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable()
             .authorizeRequests()

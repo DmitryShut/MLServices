@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class User(
     @Id
     val id: ObjectId = ObjectId.get(),
-    @Indexed(unique=true)
+    @Indexed(unique = true)
     val username: String,
-    @Indexed(unique=true)
+    @Indexed(unique = true)
     val email: String,
     val password: String
 )

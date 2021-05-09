@@ -4,6 +4,7 @@ import com.shut.mlservice.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin("*")
 @RequestMapping("/api/user")
 @RestController
 class UserController(private val userService: UserService) {
