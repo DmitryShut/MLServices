@@ -8,4 +8,6 @@ interface Provider {
     fun detectObjects(file: MultipartFile): List<DetectedObject>
 
     fun detectText(file: MultipartFile): List<DetectedObject>
+
+    fun detectFace(file: MultipartFile): List<DetectedObject>
 }

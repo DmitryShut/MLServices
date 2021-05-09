@@ -21,6 +21,7 @@ dependencies {
 	implementation(platform("software.amazon.awssdk:bom:2.16.52"))
 	implementation("software.amazon.awssdk:rekognition")
 	implementation("com.microsoft.azure.cognitiveservices:azure-cognitiveservices-computervision:1.0.6-beta")
+	implementation("com.microsoft.azure.cognitiveservices:azure-cognitiveservices-faceapi:1.0.0-beta")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.security:spring-security-core")

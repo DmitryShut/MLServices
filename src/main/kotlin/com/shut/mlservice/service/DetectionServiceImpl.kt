@@ -53,4 +53,21 @@ class DetectionServiceImpl(
             detectedObjectList
         }
 
+    override fun detectFace(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
+        when (provider) {
+            "google" -> googleProvider.detectFace(file)
+            "amazon" -> amazonProvider.detectFace(file)
+            "azure" -> azureProvider.detectFace(file)
+            else -> listOf()
+        }.let { detectedObjectList ->
+            userDetectingResultService.save(
+                UserDetectingResult(
+                    userId = userService.findByUsername(name).id,
+                    result = detectedObjectList,
+                    provider = provider
+                )
+            )
+            detectedObjectList
+        }
+
 }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.rekognition.RekognitionClient
+import software.amazon.awssdk.services.rekognition.model.DetectFacesRequest
 import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest
 import software.amazon.awssdk.services.rekognition.model.DetectTextRequest
 import software.amazon.awssdk.services.rekognition.model.Image
@@ -26,10 +27,10 @@ class AmazonProvider : Provider {
         val image = ImageIO.read(file.inputStream)
         val width = image.width
         val height = image.height
-        val souImage: Image = Image.builder()
+        val souImage = Image.builder()
             .bytes(SdkBytes.fromInputStream(file.inputStream))
             .build()
-        val detectLabelsRequest: DetectLabelsRequest = DetectLabelsRequest.builder()
+        val detectLabelsRequest = DetectLabelsRequest.builder()
             .image(souImage)
             .build()
         val labelsResponse = rekClient.detectLabels(detectLabelsRequest)
@@ -59,17 +60,45 @@ class AmazonProvider : Provider {
         val image = ImageIO.read(file.inputStream)
         val width = image.width
         val height = image.height
-        val souImage: Image = Image.builder()
+        val souImage = Image.builder()
             .bytes(SdkBytes.fromInputStream(file.inputStream))
             .build()
-        val detectTextRequest: DetectTextRequest = DetectTextRequest.builder()
+        val detectTextRequest = DetectTextRequest.builder()
             .image(souImage)
             .build()
         val labelsResponse = rekClient.detectText(detectTextRequest)
-        labelsResponse.textDetections()
         return labelsResponse.textDetections().map { textDetection ->
             DetectedObject(textDetection.detectedText(),
                 textDetection.geometry().boundingBox().let { boundingBox ->
+                    BoundingRectangle(
+                        Coordinate(
+                            (boundingBox.left() * width).toInt(),
+                            (boundingBox.top() * height).toInt()
+                        ),
+                        Coordinate(
+                            ((boundingBox.left() + boundingBox.width()) * width).roundToInt(),
+                            ((boundingBox.top() + boundingBox.height()) * height).roundToInt()
+                        )
+                    )
+                }
+            )
+        }
+    }
+
+    override fun detectFace(file: MultipartFile): List<DetectedObject> {
+        val image = ImageIO.read(file.inputStream)
+        val width = image.width
+        val height = image.height
+        val souImage = Image.builder()
+            .bytes(SdkBytes.fromInputStream(file.inputStream))
+            .build()
+        val detectTextRequest = DetectFacesRequest.builder()
+            .image(souImage)
+            .build()
+        val labelsResponse = rekClient.detectFaces(detectTextRequest)
+        return labelsResponse.faceDetails().map { textDetection ->
+            DetectedObject("face",
+                textDetection.boundingBox().let { boundingBox ->
                     BoundingRectangle(
                         Coordinate(
                             (boundingBox.left() * width).toInt(),

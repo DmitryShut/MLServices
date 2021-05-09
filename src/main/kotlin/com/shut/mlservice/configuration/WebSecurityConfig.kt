@@ -29,9 +29,8 @@ class WebSecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
+    override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
+
 
     @Autowired
     fun globalUserDetails(auth: AuthenticationManagerBuilder) {
@@ -39,9 +38,8 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun authenticationTokenFilterBean(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(tokenProvider)
-    }
+    fun authenticationTokenFilterBean() = JwtAuthenticationFilter(tokenProvider)
+
 
     public override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable()

@@ -25,4 +25,11 @@ class DetectionController(private val detectionService: DetectionService) {
         principal: Principal
     ) = ResponseEntity.ok(detectionService.detectText(file, provider, principal.name))
 
+    @GetMapping("/face")
+    fun detectFace(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("provider") provider: String,
+        principal: Principal
+    ) = ResponseEntity.ok(detectionService.detectFace(file, provider, principal.name))
+
 }

@@ -25,7 +25,7 @@ class JwtAuthenticationFilter(
         filterChain.doFilter(httpServletRequest, httpServletResponse)
     }
 
-    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        return request.requestURI.contains("/auth")
-    }
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean =
+        request.requestURI.contains("/auth")
+
 }

@@ -9,4 +9,6 @@ interface DetectionService {
 
     fun detectText(file: MultipartFile, provider: String, name: String): List<DetectedObject>
 
+    fun detectFace(file: MultipartFile, provider: String, name: String): List<DetectedObject>
+
 }

@@ -60,6 +60,27 @@ class GoogleProvider : Provider {
         }
     }
 
+    override fun detectFace(file: MultipartFile): List<DetectedObject> {
+        val image = ImageIO.read(file.inputStream)
+        val width = image.width
+        val height = image.height
+        val img = Image.newBuilder().setContent(ByteString.copyFrom(file.bytes)).build()
+        val request = AnnotateImageRequest.newBuilder().addAllFeatures(
+            listOf(
+                Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build()
+            )
+        ).setImage(img).build()
+        val response = vision.batchAnnotateImages(listOf(request))
+        return response.responsesList.flatMap { annotateImageResponse ->
+            annotateImageResponse.faceAnnotationsList
+        }.map { faceAnnotation ->
+            DetectedObject(
+                "face",
+                getBoundingRectangleFromVertixes(faceAnnotation.boundingPoly.verticesList, width, height)
+            )
+        }
+    }
+
     fun getBoundingRectangle(normalizedVertexes: List<NormalizedVertex>, width: Int, height: Int): BoundingRectangle {
         val maxX = normalizedVertexes.map { it.x * width }.maxOf { it }
         val minX = normalizedVertexes.map { it.x * width }.minOf { it }

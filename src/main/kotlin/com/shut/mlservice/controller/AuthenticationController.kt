@@ -2,6 +2,7 @@ package com.shut.mlservice.controller
 
 import com.shut.mlservice.document.User
 import com.shut.mlservice.model.LoginUser
+import com.shut.mlservice.model.Token
 import com.shut.mlservice.security.TokenProvider
 import com.shut.mlservice.service.UserService
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,7 @@ class AuthenticationController(
 ) {
 
     @PostMapping("/login")
-    fun register(@RequestBody loginUser: LoginUser): ResponseEntity<String> {
+    fun register(@RequestBody loginUser: LoginUser): ResponseEntity<Token> {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 loginUser.username,
@@ -29,11 +30,10 @@ class AuthenticationController(
         )
         SecurityContextHolder.getContext().authentication = authentication
         val token = tokenProvider.generateToken(authentication)
-        return ResponseEntity.ok(token)
+        return ResponseEntity.ok(Token(token))
     }
 
     @PostMapping("/register")
-    fun save(@RequestBody user: User): User {
-        return userService.save(user)
-    }
+    fun save(@RequestBody user: User): User = userService.save(user)
+
 }
