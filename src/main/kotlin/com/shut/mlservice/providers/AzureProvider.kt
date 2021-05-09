@@ -18,9 +18,8 @@ class AzureProvider : Provider {
         .withEndpoint("https://mlservices.cognitiveservices.azure.com/")
     private val faceAPI: FaceAPI = FaceAPIImpl(computerVisionClient.restClient())
 
-    override fun detectObjects(file: MultipartFile): List<DetectedObject> {
-        val response = computerVisionClient.computerVision().detectObjectsInStream(file.bytes, null)
-        return response.objects().map { detectedObject ->
+    override fun detectObjects(file: MultipartFile): List<DetectedObject> =
+        computerVisionClient.computerVision().detectObjectsInStream(file.bytes, null).objects().map { detectedObject ->
             DetectedObject(
                 detectedObject.objectProperty(),
                 BoundingRectangle(
@@ -34,49 +33,48 @@ class AzureProvider : Provider {
                     )
                 )
             )
-        }
-    }
 
-    override fun detectText(file: MultipartFile): List<DetectedObject> {
-        val response = computerVisionClient.computerVision().recognizePrintedTextInStream(false, file.bytes, null)
-        return response.regions().map { ocrRegion ->
-            val split = ocrRegion.boundingBox().split(",")
-            DetectedObject(
-                ocrRegion.lines().joinToString(separator = "\n") { line ->
-                    line.words().joinToString(separator = " ") { word ->
-                        word.text()
-                    }
-                },
-                BoundingRectangle(
-                    Coordinate(
-                        split[0].toInt(),
-                        split[1].toInt()
-                    ),
-                    Coordinate(
-                        split[0].toInt() + split[2].toInt(),
-                        split[1].toInt() + split[3].toInt()
+        }
+
+    override fun detectText(file: MultipartFile): List<DetectedObject> =
+        computerVisionClient.computerVision().recognizePrintedTextInStream(false, file.bytes, null).regions()
+            .map { ocrRegion ->
+                val split = ocrRegion.boundingBox().split(",")
+                DetectedObject(
+                    ocrRegion.lines().joinToString(separator = "\n") { line ->
+                        line.words().joinToString(separator = " ") { word ->
+                            word.text()
+                        }
+                    },
+                    BoundingRectangle(
+                        Coordinate(
+                            split[0].toInt(),
+                            split[1].toInt()
+                        ),
+                        Coordinate(
+                            split[0].toInt() + split[2].toInt(),
+                            split[1].toInt() + split[3].toInt()
+                        )
                     )
                 )
-            )
-        }
-    }
+            }
 
-    override fun detectFace(file: MultipartFile): List<DetectedObject> {
-        val detectWithStream = faceAPI.faces().detectWithStream(file.bytes, null)
-        return detectWithStream.map { detectedFace ->
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(
-                        detectedFace.faceRectangle().left(),
-                        detectedFace.faceRectangle().top()
-                    ),
-                    Coordinate(
-                        detectedFace.faceRectangle().left() + detectedFace.faceRectangle().width(),
-                        detectedFace.faceRectangle().top() + detectedFace.faceRectangle().height()
+
+    override fun detectFace(file: MultipartFile): List<DetectedObject> =
+        faceAPI.faces().detectWithStream(file.bytes, null)
+            .map { detectedFace ->
+                DetectedObject(
+                    "face",
+                    BoundingRectangle(
+                        Coordinate(
+                            detectedFace.faceRectangle().left(),
+                            detectedFace.faceRectangle().top()
+                        ),
+                        Coordinate(
+                            detectedFace.faceRectangle().left() + detectedFace.faceRectangle().width(),
+                            detectedFace.faceRectangle().top() + detectedFace.faceRectangle().height()
+                        )
                     )
                 )
-            )
-        }
-    }
+            }
 }

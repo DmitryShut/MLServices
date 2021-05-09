@@ -204,6 +204,34 @@ class DetectionServiceStub(
                     Coordinate(209, 117)
                 )
             ),
+            DetectedObject(
+                "face",
+                BoundingRectangle(
+                    Coordinate(509, 96),
+                    Coordinate(531, 127)
+                )
+            ),
+            DetectedObject(
+                "face",
+                BoundingRectangle(
+                    Coordinate(357, 98),
+                    Coordinate(379, 127)
+                )
+            ),
+            DetectedObject(
+                "face",
+                BoundingRectangle(
+                    Coordinate(292, 79),
+                    Coordinate(314, 108)
+                )
+            ),
+            DetectedObject(
+                "face",
+                BoundingRectangle(
+                    Coordinate(571, 102),
+                    Coordinate(592, 130)
+                )
+            ),
         ).let { detectedObjectList ->
             userDetectingResultService.save(
                 UserDetectingResult(

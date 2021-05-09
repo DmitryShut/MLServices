@@ -28,15 +28,14 @@ class GoogleProvider : Provider {
                 Feature.newBuilder().setType(Feature.Type.OBJECT_LOCALIZATION).build()
             )
         ).setImage(img).build()
-        val response = vision.batchAnnotateImages(listOf(request))
-        return response.responsesList.flatMap { annotateImageResponse ->
-            annotateImageResponse.localizedObjectAnnotationsList
-        }.map { localizedObjectAnnotation ->
-            DetectedObject(
-                localizedObjectAnnotation.name,
-                getBoundingRectangle(localizedObjectAnnotation.boundingPoly.normalizedVerticesList, width, height)
-            )
-        }
+        return vision.batchAnnotateImages(listOf(request)).responsesList
+            .flatMap { annotateImageResponse -> annotateImageResponse.localizedObjectAnnotationsList }
+            .map { localizedObjectAnnotation ->
+                DetectedObject(
+                    localizedObjectAnnotation.name,
+                    getBoundingRectangle(localizedObjectAnnotation.boundingPoly.normalizedVerticesList, width, height)
+                )
+            }
     }
 
     override fun detectText(file: MultipartFile): List<DetectedObject> {
@@ -49,15 +48,14 @@ class GoogleProvider : Provider {
                 Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build()
             )
         ).setImage(img).build()
-        val response = vision.batchAnnotateImages(listOf(request))
-        return response.responsesList.flatMap { annotateImageResponse ->
-            annotateImageResponse.textAnnotationsList
-        }.map { textAnnotation ->
-            DetectedObject(
-                textAnnotation.description,
-                getBoundingRectangleFromVertixes(textAnnotation.boundingPoly.verticesList, width, height)
-            )
-        }
+        return vision.batchAnnotateImages(listOf(request)).responsesList
+            .flatMap { annotateImageResponse -> annotateImageResponse.textAnnotationsList }
+            .map { textAnnotation ->
+                DetectedObject(
+                    textAnnotation.description,
+                    getBoundingRectangleFromVertixes(textAnnotation.boundingPoly.verticesList, width, height)
+                )
+            }
     }
 
     override fun detectFace(file: MultipartFile): List<DetectedObject> {
@@ -70,15 +68,14 @@ class GoogleProvider : Provider {
                 Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build()
             )
         ).setImage(img).build()
-        val response = vision.batchAnnotateImages(listOf(request))
-        return response.responsesList.flatMap { annotateImageResponse ->
-            annotateImageResponse.faceAnnotationsList
-        }.map { faceAnnotation ->
-            DetectedObject(
-                "face",
-                getBoundingRectangleFromVertixes(faceAnnotation.boundingPoly.verticesList, width, height)
-            )
-        }
+        return vision.batchAnnotateImages(listOf(request)).responsesList
+            .flatMap { annotateImageResponse -> annotateImageResponse.faceAnnotationsList }
+            .map { faceAnnotation ->
+                DetectedObject(
+                    "face",
+                    getBoundingRectangleFromVertixes(faceAnnotation.boundingPoly.verticesList, width, height)
+                )
+            }
     }
 
     fun getBoundingRectangle(normalizedVertexes: List<NormalizedVertex>, width: Int, height: Int): BoundingRectangle {

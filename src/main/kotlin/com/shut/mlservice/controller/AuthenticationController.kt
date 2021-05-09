@@ -35,5 +35,4 @@ class AuthenticationController(
 
     @PostMapping("/register")
     fun save(@RequestBody user: User): User = userService.save(user)
-
 }
