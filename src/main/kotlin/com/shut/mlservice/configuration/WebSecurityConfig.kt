@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.filter.CorsFilter
 
 
 @Configuration
@@ -44,12 +45,14 @@ class WebSecurityConfig(
     public override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable()
             .authorizeRequests()
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/api/user").authenticated()
+            .antMatchers("/api/detection").authenticated()
+            .antMatchers("/api/auth").permitAll()
             .and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(CORSFilter(), CorsFilter::class.java)
     }
 }
