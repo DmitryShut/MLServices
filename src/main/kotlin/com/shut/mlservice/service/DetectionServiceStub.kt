@@ -12,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile
 @Profile("stub")
 class DetectionServiceStub(
     private val userDetectingResultService: UserDetectingResultService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val fileService: FileService
 ) : DetectionService {
 
     override fun detectObjects(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
@@ -39,10 +40,12 @@ class DetectionServiceStub(
                 )
             )
         ).let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )
@@ -94,10 +97,12 @@ class DetectionServiceStub(
                 )
             )
         ).let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )
@@ -233,10 +238,12 @@ class DetectionServiceStub(
                 )
             ),
         ).let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )

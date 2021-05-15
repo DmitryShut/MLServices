@@ -11,5 +11,6 @@ data class UserDetectingResult(
     val id: ObjectId = ObjectId.get(),
     val userId: ObjectId,
     val result: List<DetectedObject>,
+    val url: String,
     val provider: String
 )

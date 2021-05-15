@@ -22,6 +22,7 @@ dependencies {
 	implementation("software.amazon.awssdk:rekognition")
 	implementation("com.microsoft.azure.cognitiveservices:azure-cognitiveservices-computervision:1.0.6-beta")
 	implementation("com.microsoft.azure.cognitiveservices:azure-cognitiveservices-faceapi:1.0.0-beta")
+	implementation("com.cloudinary:cloudinary-http44:1.29.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.security:spring-security-core")

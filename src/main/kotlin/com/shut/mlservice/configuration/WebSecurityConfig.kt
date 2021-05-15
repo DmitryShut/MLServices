@@ -47,6 +47,7 @@ class WebSecurityConfig(
             .authorizeRequests()
             .antMatchers("/api/user").authenticated()
             .antMatchers("/api/detection").authenticated()
+            .antMatchers("/api/result").authenticated()
             .antMatchers("/api/auth").permitAll()
             .and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)

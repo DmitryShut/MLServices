@@ -16,7 +16,8 @@ class DetectionServiceImpl(
     private val amazonProvider: AmazonProvider,
     private val azureProvider: AzureProvider,
     private val userDetectingResultService: UserDetectingResultService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val fileService: FileService
 ) : DetectionService {
 
     override fun detectObjects(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
@@ -26,10 +27,12 @@ class DetectionServiceImpl(
             "azure" -> azureProvider.detectObjects(file)
             else -> listOf()
         }.let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )
@@ -43,10 +46,12 @@ class DetectionServiceImpl(
             "azure" -> azureProvider.detectText(file)
             else -> listOf()
         }.let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )
@@ -60,10 +65,12 @@ class DetectionServiceImpl(
             "azure" -> azureProvider.detectFace(file)
             else -> listOf()
         }.let { detectedObjectList ->
+            val url = fileService.upload(file)
             userDetectingResultService.save(
                 UserDetectingResult(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
+                    url = url,
                     provider = provider
                 )
             )
