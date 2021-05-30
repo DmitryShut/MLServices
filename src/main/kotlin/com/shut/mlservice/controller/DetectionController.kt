@@ -1,5 +1,6 @@
 package com.shut.mlservice.controller
 
+import com.shut.mlservice.document.UserDetectingResultDto
 import com.shut.mlservice.providers.Providers
 import com.shut.mlservice.service.DetectionService
 import org.springframework.http.ResponseEntity
@@ -16,7 +17,17 @@ class DetectionController(private val detectionService: DetectionService) {
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: Providers,
         principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectObjects(file, provider, principal.name))
+    ) = ResponseEntity.ok(detectionService.detectObjects(file, provider, principal.name).let {
+        UserDetectingResultDto(
+            it.id.toHexString(),
+            it.userId.toHexString(),
+            it.result,
+            it.option,
+            it.url,
+            it.provider,
+            it.rating
+        )
+    })
 
     @GetMapping("/objects/providers")
     fun getObjectProviders() =
@@ -35,13 +46,33 @@ class DetectionController(private val detectionService: DetectionService) {
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: Providers,
         principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectText(file, provider, principal.name))
+    ) = ResponseEntity.ok(detectionService.detectText(file, provider, principal.name).let {
+        UserDetectingResultDto(
+            it.id.toHexString(),
+            it.userId.toHexString(),
+            it.result,
+            it.option,
+            it.url,
+            it.provider,
+            it.rating
+        )
+    })
 
     @PostMapping("/face")
     fun detectFace(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: Providers,
         principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectFace(file, provider, principal.name))
+    ) = ResponseEntity.ok(detectionService.detectFace(file, provider, principal.name).let {
+        UserDetectingResultDto(
+            it.id.toHexString(),
+            it.userId.toHexString(),
+            it.result,
+            it.option,
+            it.url,
+            it.provider,
+            it.rating
+        )
+    })
 
 }
