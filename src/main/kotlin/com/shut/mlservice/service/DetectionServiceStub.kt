@@ -26,24 +26,24 @@ class DetectionServiceStub(
     override fun detectObjects(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
         listOf(
             DetectedObject(
-                "Dog",
+                "Cat",
                 BoundingRectangle(
-                    Coordinate(658, 291),
-                    Coordinate(1280, 1079)
+                    Coordinate(429, 1001),
+                    Coordinate(766, 160)
                 )
             ),
             DetectedObject(
-                "Dog",
+                "Cat",
                 BoundingRectangle(
-                    Coordinate(28, 259),
-                    Coordinate(745, 1077)
+                    Coordinate(1392, 1005),
+                    Coordinate(1757, 113)
                 )
             ),
             DetectedObject(
-                "Dog",
+                "Cat",
                 BoundingRectangle(
-                    Coordinate(1139, 193),
-                    Coordinate(1909, 1078)
+                    Coordinate(106, 998),
+                    Coordinate(506, 164)
                 )
             )
         ).let { detectedObjectList ->
@@ -55,7 +55,7 @@ class DetectionServiceStub(
                     url = url,
                     provider = provider.toString(),
                     rating = null,
-                    option = Option.OBJECTS.name
+                    option = Option.FACES.name
                 )
             )
         }
@@ -63,10 +63,10 @@ class DetectionServiceStub(
     override fun detectText(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
         listOf(
             DetectedObject(
-                "THIS IS A TEST\\nIF YOU CAN\\nREAD THIS\\nALL THE WAY\\nDOWN TO HERE\\nPLEASE",
+                "THIS IS A TEST\nIF YOU CAN\nREAD THIS\nALL THE WAY\nDOWN TO HERE\nPLEASE,\n",
                 BoundingRectangle(
-                    Coordinate(261, 568),
-                    Coordinate(981, 477)
+                    Coordinate(458, 737),
+                    Coordinate(1503, 268)
                 )
             )
         ).let { detectedObjectList ->
@@ -78,35 +78,13 @@ class DetectionServiceStub(
                     url = url,
                     provider = provider.toString(),
                     rating = null,
-                    option = Option.TEXT.name
+                    option = Option.FACES.name
                 )
             )
         }
 
     override fun detectFace(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
-        when (provider) {
-            AMAZON -> listOf(
-                DetectedObject(
-                    "face",
-                    BoundingRectangle(
-                        Coordinate(155, 896),
-                        Coordinate(623, 257)
-                    )
-                )
-            ).let { detectedObjectList ->
-                val url = fileService.upload(file)
-                userDetectingResultService.save(
-                    UserDetectingResult(
-                        userId = userService.findByUsername(name).id,
-                        result = detectedObjectList,
-                        url = url,
-                        provider = provider.toString(),
-                        rating = null,
-                        option = Option.FACES.name
-                    )
-                )
-            }
-            GOOGLE -> listOf(
+            listOf(
                 DetectedObject(
                     "face",
                     BoundingRectangle(
@@ -127,36 +105,6 @@ class DetectionServiceStub(
                     )
                 )
             }
-            AZURE -> listOf(
-                DetectedObject(
-                    "face",
-                    BoundingRectangle(
-                        Coordinate(25, 712),
-                        Coordinate(664, 124)
-                    )
-                )
-            ).let { detectedObjectList ->
-                val url = fileService.upload(file)
-                userDetectingResultService.save(
-                    UserDetectingResult(
-                        userId = userService.findByUsername(name).id,
-                        result = detectedObjectList,
-                        url = url,
-                        provider = provider.toString(),
-                        rating = null,
-                        option = Option.FACES.name
-                    )
-                )
-            }
-            else -> UserDetectingResult(
-                userId = userService.findByUsername(name).id,
-                result = listOf(),
-                url = "url",
-                provider = provider.toString(),
-                rating = null,
-                option = Option.FACES.name
-            )
-        }
 
     override fun getObjectProviders(): List<String> =
         objectProviders.keys.map { it.name }
