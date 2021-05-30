@@ -4,6 +4,10 @@ import com.shut.mlservice.document.UserDetectingResult
 import com.shut.mlservice.model.BoundingRectangle
 import com.shut.mlservice.model.Coordinate
 import com.shut.mlservice.model.DetectedObject
+import com.shut.mlservice.providers.Option
+import com.shut.mlservice.providers.Provider
+import com.shut.mlservice.providers.Providers
+import com.shut.mlservice.providers.Providers.*
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -11,12 +15,15 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 @Profile("stub")
 class DetectionServiceStub(
-    private val userDetectingResultService: UserDetectingResultService,
-    private val userService: UserService,
-    private val fileService: FileService
+    private val faceProviders: Map<Providers, Provider>,
+    private val objectProviders: Map<Providers, Provider>,
+    private val textProviders: Map<Providers, Provider>,
+    private val userDetectingResultService: UserDetectingResultServiceImpl,
+    private val userService: UserServiceImpl,
+    private val fileService: FileServiceImpl
 ) : DetectionService {
 
-    override fun detectObjects(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
+    override fun detectObjects(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
         listOf(
             DetectedObject(
                 "Dog",
@@ -46,55 +53,21 @@ class DetectionServiceStub(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
                     url = url,
-                    provider = provider
+                    provider = provider.toString(),
+                    rating = null,
+                    option = Option.OBJECTS.name
                 )
             )
-            detectedObjectList
         }
 
-    override fun detectText(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
+    override fun detectText(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
         listOf(
             DetectedObject(
-                "СТУДЕНЧЕСКАЯ СЛУЖБА\\nБЕЗОПА СНОСТИ\\nБГУ\\n",
+                "THIS IS A TEST\\nIF YOU CAN\\nREAD THIS\\nALL THE WAY\\nDOWN TO HERE\\nPLEASE",
                 BoundingRectangle(
                     Coordinate(261, 568),
                     Coordinate(981, 477)
                 )
-            ),
-            DetectedObject(
-                "СТУДЕНЧЕСКАЯ",
-                BoundingRectangle(
-                    Coordinate(274, 519),
-                    Coordinate(619, 477)
-                )
-            ),
-            DetectedObject(
-                "СЛУЖБА",
-                BoundingRectangle(
-                    Coordinate(612, 516),
-                    Coordinate(795, 481)
-                )
-            ),
-            DetectedObject(
-                "БЕЗОПА",
-                BoundingRectangle(
-                    Coordinate(261, 568),
-                    Coordinate(515, 522)
-                )
-            ),
-            DetectedObject(
-                "СНОСТИ",
-                BoundingRectangle(
-                    Coordinate(588, 562),
-                    Coordinate(794, 524)
-                )
-            ),
-            DetectedObject(
-                "БГУ",
-                BoundingRectangle(
-                    Coordinate(825, 568),
-                    Coordinate(981, 485)
-                )
             )
         ).let { detectedObjectList ->
             val url = fileService.upload(file)
@@ -103,151 +76,95 @@ class DetectionServiceStub(
                     userId = userService.findByUsername(name).id,
                     result = detectedObjectList,
                     url = url,
-                    provider = provider
+                    provider = provider.toString(),
+                    rating = null,
+                    option = Option.TEXT.name
                 )
             )
-            detectedObjectList
         }
 
-    override fun detectFace(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
-        listOf(
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(739, 173),
-                    Coordinate(766, 212)
+    override fun detectFace(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
+        when (provider) {
+            AMAZON -> listOf(
+                DetectedObject(
+                    "face",
+                    BoundingRectangle(
+                        Coordinate(155, 896),
+                        Coordinate(623, 257)
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(92, 156),
-                    Coordinate(121, 190)
+            ).let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.FACES.name
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(804, 178),
-                    Coordinate(832, 215)
+            }
+            GOOGLE -> listOf(
+                DetectedObject(
+                    "face",
+                    BoundingRectangle(
+                        Coordinate(25, 712),
+                        Coordinate(664, 124)
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(163, 202),
-                    Coordinate(191, 236)
+            ).let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.FACES.name
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(498, 189),
-                    Coordinate(523, 225)
+            }
+            AZURE -> listOf(
+                DetectedObject(
+                    "face",
+                    BoundingRectangle(
+                        Coordinate(25, 712),
+                        Coordinate(664, 124)
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(427, 195),
-                    Coordinate(454, 230)
+            ).let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.FACES.name
+                    )
                 )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(680, 114),
-                    Coordinate(705, 149)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(244, 115),
-                    Coordinate(268, 149)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(355, 193),
-                    Coordinate(379, 228)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(617, 103),
-                    Coordinate(639, 139)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(94, 74),
-                    Coordinate(120, 106)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(746, 90),
-                    Coordinate(770, 123)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(429, 111),
-                    Coordinate(454, 142)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(185, 89),
-                    Coordinate(209, 117)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(509, 96),
-                    Coordinate(531, 127)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(357, 98),
-                    Coordinate(379, 127)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(292, 79),
-                    Coordinate(314, 108)
-                )
-            ),
-            DetectedObject(
-                "face",
-                BoundingRectangle(
-                    Coordinate(571, 102),
-                    Coordinate(592, 130)
-                )
-            ),
-        ).let { detectedObjectList ->
-            val url = fileService.upload(file)
-            userDetectingResultService.save(
-                UserDetectingResult(
-                    userId = userService.findByUsername(name).id,
-                    result = detectedObjectList,
-                    url = url,
-                    provider = provider
-                )
+            }
+            else -> UserDetectingResult(
+                userId = userService.findByUsername(name).id,
+                result = listOf(),
+                url = "url",
+                provider = provider.toString(),
+                rating = null,
+                option = Option.FACES.name
             )
-            detectedObjectList
         }
+
+    override fun getObjectProviders(): List<String> =
+        objectProviders.keys.map { it.name }
+
+    override fun getFaceProviders(): List<String> =
+        faceProviders.keys.map { it.name }
+
+    override fun getTextProviders(): List<String> =
+        textProviders.keys.map { it.name }
 
 }

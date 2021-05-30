@@ -3,8 +3,8 @@ package com.shut.mlservice.controller
 import com.shut.mlservice.document.User
 import com.shut.mlservice.model.LoginUser
 import com.shut.mlservice.model.Token
-import com.shut.mlservice.security.TokenProvider
-import com.shut.mlservice.service.UserService
+import com.shut.mlservice.security.TokenProviderImpl
+import com.shut.mlservice.service.UserServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth")
 class AuthenticationController(
     private val authenticationManager: AuthenticationManager,
-    private val tokenProvider: TokenProvider,
-    private val userService: UserService
+    private val tokenProvider: TokenProviderImpl,
+    private val userService: UserServiceImpl
 ) {
 
     @PostMapping("/login")
-    fun register(@RequestBody loginUser: LoginUser): ResponseEntity<Token> {
+    fun login(@RequestBody loginUser: LoginUser): ResponseEntity<Token> {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 loginUser.username,

@@ -1,10 +1,9 @@
 package com.shut.mlservice.service
 
 import com.shut.mlservice.document.UserDetectingResult
-import com.shut.mlservice.model.DetectedObject
-import com.shut.mlservice.providers.AmazonProvider
-import com.shut.mlservice.providers.AzureProvider
-import com.shut.mlservice.providers.GoogleProvider
+import com.shut.mlservice.providers.Option
+import com.shut.mlservice.providers.Provider
+import com.shut.mlservice.providers.Providers
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -12,69 +11,69 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 @Profile("prod")
 class DetectionServiceImpl(
-    private val googleProvider: GoogleProvider,
-    private val amazonProvider: AmazonProvider,
-    private val azureProvider: AzureProvider,
-    private val userDetectingResultService: UserDetectingResultService,
-    private val userService: UserService,
-    private val fileService: FileService
+    private val faceProviders: Map<Providers, Provider>,
+    private val objectProviders: Map<Providers, Provider>,
+    private val textProviders: Map<Providers, Provider>,
+    private val userDetectingResultService: UserDetectingResultServiceImpl,
+    private val userService: UserServiceImpl,
+    private val fileService: FileServiceImpl
 ) : DetectionService {
 
-    override fun detectObjects(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
-        when (provider) {
-            "google" -> googleProvider.detectObjects(file)
-            "amazon" -> amazonProvider.detectObjects(file)
-            "azure" -> azureProvider.detectObjects(file)
-            else -> listOf()
-        }.let { detectedObjectList ->
-            val url = fileService.upload(file)
-            userDetectingResultService.save(
-                UserDetectingResult(
-                    userId = userService.findByUsername(name).id,
-                    result = detectedObjectList,
-                    url = url,
-                    provider = provider
+    override fun detectObjects(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
+        objectProviders.getValue(provider).detectObjects(file)
+            .let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.OBJECTS.name
+                    )
                 )
-            )
-            detectedObjectList
-        }
+            }
 
-    override fun detectText(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
-        when (provider) {
-            "google" -> googleProvider.detectText(file)
-            "amazon" -> amazonProvider.detectText(file)
-            "azure" -> azureProvider.detectText(file)
-            else -> listOf()
-        }.let { detectedObjectList ->
-            val url = fileService.upload(file)
-            userDetectingResultService.save(
-                UserDetectingResult(
-                    userId = userService.findByUsername(name).id,
-                    result = detectedObjectList,
-                    url = url,
-                    provider = provider
+    override fun detectText(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
+        textProviders.getValue(provider).detectText(file)
+            .let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.TEXT.name
+                    )
                 )
-            )
-            detectedObjectList
-        }
+            }
 
-    override fun detectFace(file: MultipartFile, provider: String, name: String): List<DetectedObject> =
-        when (provider) {
-            "google" -> googleProvider.detectFace(file)
-            "amazon" -> amazonProvider.detectFace(file)
-            "azure" -> azureProvider.detectFace(file)
-            else -> listOf()
-        }.let { detectedObjectList ->
-            val url = fileService.upload(file)
-            userDetectingResultService.save(
-                UserDetectingResult(
-                    userId = userService.findByUsername(name).id,
-                    result = detectedObjectList,
-                    url = url,
-                    provider = provider
+    override fun detectFace(file: MultipartFile, provider: Providers, name: String): UserDetectingResult =
+        faceProviders.getValue(provider).detectFace(file)
+            .let { detectedObjectList ->
+                val url = fileService.upload(file)
+                userDetectingResultService.save(
+                    UserDetectingResult(
+                        userId = userService.findByUsername(name).id,
+                        result = detectedObjectList,
+                        url = url,
+                        provider = provider.toString(),
+                        rating = null,
+                        option = Option.FACES.name
+                    )
                 )
-            )
-            detectedObjectList
-        }
+            }
+
+    override fun getObjectProviders(): List<String> =
+        objectProviders.keys.map { it.name }
+
+    override fun getFaceProviders(): List<String> =
+        faceProviders.keys.map { it.name }
+
+    override fun getTextProviders(): List<String> =
+        textProviders.keys.map { it.name }
 
 }

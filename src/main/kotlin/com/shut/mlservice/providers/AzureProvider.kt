@@ -7,10 +7,8 @@ import com.microsoft.azure.cognitiveservices.vision.faceapi.implementation.FaceA
 import com.shut.mlservice.model.BoundingRectangle
 import com.shut.mlservice.model.Coordinate
 import com.shut.mlservice.model.DetectedObject
-import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
-@Service
 class AzureProvider : Provider {
 
     private val computerVisionClient: ComputerVisionClient = ComputerVisionManager
@@ -25,11 +23,11 @@ class AzureProvider : Provider {
                 BoundingRectangle(
                     Coordinate(
                         detectedObject.rectangle().x(),
-                        detectedObject.rectangle().y()
+                        detectedObject.rectangle().y() + detectedObject.rectangle().h()
                     ),
                     Coordinate(
                         detectedObject.rectangle().x() + detectedObject.rectangle().w(),
-                        detectedObject.rectangle().y() + detectedObject.rectangle().h()
+                        detectedObject.rectangle().y()
                     )
                 )
             )
@@ -49,11 +47,11 @@ class AzureProvider : Provider {
                     BoundingRectangle(
                         Coordinate(
                             split[0].toInt(),
-                            split[1].toInt()
+                            split[1].toInt() + split[3].toInt()
                         ),
                         Coordinate(
                             split[0].toInt() + split[2].toInt(),
-                            split[1].toInt() + split[3].toInt()
+                            split[1].toInt()
                         )
                     )
                 )
@@ -68,11 +66,11 @@ class AzureProvider : Provider {
                     BoundingRectangle(
                         Coordinate(
                             detectedFace.faceRectangle().left(),
-                            detectedFace.faceRectangle().top()
+                            detectedFace.faceRectangle().top() + detectedFace.faceRectangle().height()
                         ),
                         Coordinate(
                             detectedFace.faceRectangle().left() + detectedFace.faceRectangle().width(),
-                            detectedFace.faceRectangle().top() + detectedFace.faceRectangle().height()
+                            detectedFace.faceRectangle().top()
                         )
                     )
                 )

@@ -2,7 +2,7 @@ package com.shut.mlservice.configuration
 
 import com.shut.mlservice.security.JwtAuthenticationEntryPoint
 import com.shut.mlservice.security.JwtAuthenticationFilter
-import com.shut.mlservice.security.TokenProvider
+import com.shut.mlservice.security.TokenProviderImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,7 +26,7 @@ class WebSecurityConfig(
     private val customUserDetailsService: UserDetailsService,
     private val unauthorizedHandler: JwtAuthenticationEntryPoint,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProviderImpl
 ) : WebSecurityConfigurerAdapter() {
 
     @Bean

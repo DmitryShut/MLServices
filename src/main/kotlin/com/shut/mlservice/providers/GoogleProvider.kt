@@ -5,14 +5,12 @@ import com.google.protobuf.ByteString
 import com.shut.mlservice.model.BoundingRectangle
 import com.shut.mlservice.model.Coordinate
 import com.shut.mlservice.model.DetectedObject
-import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import javax.annotation.PreDestroy
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
 
-@Service
 class GoogleProvider : Provider {
 
     private val vision: ImageAnnotatorClient = ImageAnnotatorClient.create()
@@ -33,7 +31,15 @@ class GoogleProvider : Provider {
             .map { localizedObjectAnnotation ->
                 DetectedObject(
                     localizedObjectAnnotation.name,
-                    getBoundingRectangle(localizedObjectAnnotation.boundingPoly.normalizedVerticesList, width, height)
+                    getBoundingRectangle(
+                        localizedObjectAnnotation.boundingPoly.normalizedVerticesList.filter {
+                            !it.x.equals(0f) && !it.y.equals(
+                                0f
+                            )
+                        },
+                        width,
+                        height
+                    )
                 )
             }
     }
@@ -53,7 +59,9 @@ class GoogleProvider : Provider {
             .map { textAnnotation ->
                 DetectedObject(
                     textAnnotation.description,
-                    getBoundingRectangleFromVertixes(textAnnotation.boundingPoly.verticesList, width, height)
+                    getBoundingRectangleFromVertixes(textAnnotation.boundingPoly.verticesList.filter {
+                        it.x != 0 && it.y != 0
+                    }, width, height)
                 )
             }
     }
@@ -73,7 +81,9 @@ class GoogleProvider : Provider {
             .map { faceAnnotation ->
                 DetectedObject(
                     "face",
-                    getBoundingRectangleFromVertixes(faceAnnotation.boundingPoly.verticesList, width, height)
+                    getBoundingRectangleFromVertixes(faceAnnotation.fdBoundingPoly.verticesList.filter {
+                        it.x != 0 && it.y != 0
+                    }, width, height)
                 )
             }
     }

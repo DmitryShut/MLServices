@@ -3,7 +3,6 @@ package com.shut.mlservice.providers
 import com.shut.mlservice.model.BoundingRectangle
 import com.shut.mlservice.model.Coordinate
 import com.shut.mlservice.model.DetectedObject
-import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
@@ -16,7 +15,6 @@ import javax.annotation.PreDestroy
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
-@Service
 class AmazonProvider : Provider {
 
     private val rekClient = RekognitionClient.builder()
@@ -42,12 +40,12 @@ class AmazonProvider : Provider {
                             instance.boundingBox().let { boundingBox ->
                                 BoundingRectangle(
                                     Coordinate(
-                                        (boundingBox.left() * width).roundToInt(),
-                                        (boundingBox.top() * height).roundToInt()
+                                        (boundingBox.left() * width).toInt(),
+                                        ((1 - boundingBox.top()) * height).toInt()
                                     ),
                                     Coordinate(
                                         ((boundingBox.left() + boundingBox.width()) * width).roundToInt(),
-                                        ((boundingBox.top() + boundingBox.height()) * height).roundToInt()
+                                        ((1 - boundingBox.top() - boundingBox.height()) * height).roundToInt()
                                     )
                                 )
                             }
@@ -73,11 +71,11 @@ class AmazonProvider : Provider {
                         BoundingRectangle(
                             Coordinate(
                                 (boundingBox.left() * width).toInt(),
-                                (boundingBox.top() * height).toInt()
+                                ((1 - boundingBox.top()) * height).toInt()
                             ),
                             Coordinate(
                                 ((boundingBox.left() + boundingBox.width()) * width).roundToInt(),
-                                ((boundingBox.top() + boundingBox.height()) * height).roundToInt()
+                                ((1 - boundingBox.top() - boundingBox.height()) * height).roundToInt()
                             )
                         )
                     }
@@ -102,11 +100,11 @@ class AmazonProvider : Provider {
                         BoundingRectangle(
                             Coordinate(
                                 (boundingBox.left() * width).toInt(),
-                                (boundingBox.top() * height).toInt()
+                                ((1 - boundingBox.top()) * height).toInt()
                             ),
                             Coordinate(
                                 ((boundingBox.left() + boundingBox.width()) * width).roundToInt(),
-                                ((boundingBox.top() + boundingBox.height()) * height).roundToInt()
+                                ((1 - boundingBox.top() - boundingBox.height()) * height).roundToInt()
                             )
                         )
                     }

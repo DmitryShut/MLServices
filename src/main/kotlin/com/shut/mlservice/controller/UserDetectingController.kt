@@ -1,17 +1,23 @@
 package com.shut.mlservice.controller
 
+import com.shut.mlservice.document.UserDetectingResult
 import com.shut.mlservice.service.UserDetectingResultService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/result")
 @RestController
 class UserDetectingController(private val userDetectingResultService: UserDetectingResultService) {
 
     @GetMapping("/user/{id}")
-    fun findByUserId(@PathVariable id: String) = ResponseEntity.ok(userDetectingResultService.findByUserId(id))
+    fun findByUserId(
+        @PathVariable("id") id: String,
+        @RequestParam("provider", required = false) provider: String?,
+        @RequestParam("option", required = false) option: String?
+    ) =
+        ResponseEntity.ok(userDetectingResultService.findByUserId(id, option, provider))
 
+    @PutMapping
+    fun update(@RequestBody userDetectingResult: UserDetectingResult) =
+        ResponseEntity.ok(userDetectingResultService.save(userDetectingResult))
 }

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse
 
 
 class JwtAuthenticationFilter(
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProviderImpl
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
