@@ -1,6 +1,6 @@
 package com.shut.mlservice.providers
 
-enum class Option {
+enum class Function {
     OBJECTS,
     TEXT,
     FACES

@@ -88,7 +88,7 @@ class GoogleProvider : Provider {
             }
     }
 
-    fun getBoundingRectangle(normalizedVertexes: List<NormalizedVertex>, width: Int, height: Int): BoundingRectangle {
+    private fun getBoundingRectangle(normalizedVertexes: List<NormalizedVertex>, width: Int, height: Int): BoundingRectangle {
         val maxX = normalizedVertexes.map { it.x * width }.maxOf { it }
         val minX = normalizedVertexes.map { it.x * width }.minOf { it }
         val maxY = normalizedVertexes.map { it.y * height }.maxOf { it }
@@ -103,7 +103,7 @@ class GoogleProvider : Provider {
         )
     }
 
-    fun getBoundingRectangleFromVertixes(normalizedVertexes: List<Vertex>, width: Int, height: Int): BoundingRectangle {
+    private fun getBoundingRectangleFromVertixes(normalizedVertexes: List<Vertex>, width: Int, height: Int): BoundingRectangle {
         val maxX = normalizedVertexes.map { it.x }.maxOf { it }
         val minX = normalizedVertexes.map { it.x }.minOf { it }
         val maxY = normalizedVertexes.map { it.y }.maxOf { it }

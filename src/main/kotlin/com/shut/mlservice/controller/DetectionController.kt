@@ -1,6 +1,7 @@
 package com.shut.mlservice.controller
 
 import com.shut.mlservice.document.UserDetectingResultDto
+import com.shut.mlservice.providers.Function
 import com.shut.mlservice.providers.Providers
 import com.shut.mlservice.service.DetectionService
 import org.springframework.http.ResponseEntity
@@ -16,8 +17,9 @@ class DetectionController(private val detectionService: DetectionService) {
     fun detectObjects(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: Providers,
+        @RequestParam("function") function: Function,
         principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectObjects(file, provider, principal.name).let {
+    ) = ResponseEntity.ok(detectionService.detect(file, provider, principal.name, function).let {
         UserDetectingResultDto(
             it.id.toHexString(),
             it.userId.toHexString(),
@@ -29,50 +31,8 @@ class DetectionController(private val detectionService: DetectionService) {
         )
     })
 
-    @GetMapping("/objects/providers")
-    fun getObjectProviders() =
-        ResponseEntity.ok(detectionService.getObjectProviders())
-
-    @GetMapping("/text/providers")
-    fun getTextProviders() =
-        ResponseEntity.ok(detectionService.getTextProviders())
-
-    @GetMapping("/face/providers")
-    fun getFaceProviders() =
-        ResponseEntity.ok(detectionService.getFaceProviders())
-
-    @PostMapping("/text")
-    fun detectText(
-        @RequestParam("file") file: MultipartFile,
-        @RequestParam("provider") provider: Providers,
-        principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectText(file, provider, principal.name).let {
-        UserDetectingResultDto(
-            it.id.toHexString(),
-            it.userId.toHexString(),
-            it.result,
-            it.option,
-            it.url,
-            it.provider,
-            it.rating
-        )
-    })
-
-    @PostMapping("/face")
-    fun detectFace(
-        @RequestParam("file") file: MultipartFile,
-        @RequestParam("provider") provider: Providers,
-        principal: Principal
-    ) = ResponseEntity.ok(detectionService.detectFace(file, provider, principal.name).let {
-        UserDetectingResultDto(
-            it.id.toHexString(),
-            it.userId.toHexString(),
-            it.result,
-            it.option,
-            it.url,
-            it.provider,
-            it.rating
-        )
-    })
-
+    @GetMapping("/providers")
+    fun getObjectProviders(
+        @RequestParam("function") function: Function
+    ) = ResponseEntity.ok(detectionService.getProviders(function))
 }
