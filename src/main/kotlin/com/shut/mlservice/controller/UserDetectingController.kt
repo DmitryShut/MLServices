@@ -29,6 +29,6 @@ class UserDetectingController(private val userDetectingResultService: UserDetect
         })
 
     @PutMapping
-    fun update(@RequestBody userDetectingResult: UserDetectingResult) =
-        ResponseEntity.ok(userDetectingResultService.save(userDetectingResult))
+    fun update(@RequestBody userDetectingResult: UserDetectingResultDto) =
+        ResponseEntity.ok(userDetectingResultService.update(userDetectingResult))
 }

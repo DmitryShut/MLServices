@@ -1,6 +1,7 @@
 package com.shut.mlservice.service
 
 import com.shut.mlservice.document.UserDetectingResult
+import com.shut.mlservice.document.UserDetectingResultDto
 import com.shut.mlservice.repository.UserDetectingResultRepository
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -22,5 +23,19 @@ class UserDetectingResultServiceImpl(
 
     override fun save(userDetectingResult: UserDetectingResult): UserDetectingResult =
         userDetectingResultRepository.save(userDetectingResult)
+
+    override fun update(userDetectingResult: UserDetectingResultDto): UserDetectingResultDto =
+        userDetectingResultRepository.deleteById(userDetectingResult.id).let {
+            userDetectingResultRepository.save(UserDetectingResult(
+                ObjectId(userDetectingResult.id),
+                ObjectId(userDetectingResult.userId),
+                userDetectingResult.result,
+                userDetectingResult.option,
+                userDetectingResult.url,
+                userDetectingResult.provider,
+                userDetectingResult.rating
+            ))
+            userDetectingResult
+        }
 
 }
