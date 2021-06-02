@@ -17,7 +17,7 @@ class TokenProviderImpl(private val userService: UserServiceImpl) : TokenProvide
         Jwts.builder()
             .setSubject(authentication.name)
             .claim("id", userService.findByUsername(authentication.name).id.toString())
-            .signWith(SignatureAlgorithm.HS256, SecurityJwtConstants.SIGNING_KEY)
+            .signWith(SignatureAlgorithm.HS512, SecurityJwtConstants.SIGNING_KEY)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(Date(System.currentTimeMillis() + SecurityJwtConstants.ACCESS_TOKEN_VALIDITY_SECONDS * 1000))
             .compact()

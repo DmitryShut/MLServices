@@ -7,10 +7,7 @@ import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.rekognition.RekognitionClient
-import software.amazon.awssdk.services.rekognition.model.DetectFacesRequest
-import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest
-import software.amazon.awssdk.services.rekognition.model.DetectTextRequest
-import software.amazon.awssdk.services.rekognition.model.Image
+import software.amazon.awssdk.services.rekognition.model.*
 import javax.annotation.PreDestroy
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
@@ -31,7 +28,11 @@ class AmazonProvider : Provider {
         val detectObjectsRequest = DetectLabelsRequest.builder()
             .image(amazonImage)
             .build()
-        return rekClient.detectLabels(detectObjectsRequest).labels()
+        return processResponse(rekClient.detectLabels(detectObjectsRequest), width, height)
+    }
+
+    private fun processResponse(detectLabelsResponse: DetectLabelsResponse, width: Int, height: Int) =
+        detectLabelsResponse.labels()
             .flatMap { label ->
                 label.instances()
                     .map { instance ->
@@ -52,7 +53,6 @@ class AmazonProvider : Provider {
                         )
                     }
             }
-    }
 
     override fun detectText(file: MultipartFile): List<DetectedObject> {
         val image = ImageIO.read(file.inputStream)

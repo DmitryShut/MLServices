@@ -19,20 +19,9 @@ class DetectionController(private val detectionService: DetectionService) {
         @RequestParam("provider") provider: Providers,
         @RequestParam("function") function: Function,
         principal: Principal
-    ) = ResponseEntity.ok(detectionService.detect(file, provider, principal.name, function).let {
-        UserDetectingResultDto(
-            it.id.toHexString(),
-            it.userId.toHexString(),
-            it.result,
-            it.option,
-            it.url,
-            it.provider,
-            it.rating
-        )
-    })
+    ) = ResponseEntity.ok(detectionService.detect(file, provider, principal.name, function))
 
     @GetMapping("/providers")
-    fun getObjectProviders(
-        @RequestParam("function") function: Function
-    ) = ResponseEntity.ok(detectionService.getProviders(function))
+    fun getObjectProviders(@RequestParam("function") function: Function) =
+        ResponseEntity.ok(detectionService.getProviders(function))
 }

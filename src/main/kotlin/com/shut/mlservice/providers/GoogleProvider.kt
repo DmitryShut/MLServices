@@ -11,14 +11,10 @@ import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
 
-class GoogleProvider : Provider {
-
-    private val vision: ImageAnnotatorClient = ImageAnnotatorClient.create()
+class GoogleProvider(private val vision: ImageAnnotatorClient = ImageAnnotatorClient.create()) : Provider {
 
     override fun detectObjects(file: MultipartFile): List<DetectedObject> {
         val image = ImageIO.read(file.inputStream)
-        val width = image.width
-        val height = image.height
         val img = Image.newBuilder().setContent(ByteString.copyFrom(file.bytes)).build()
         val request = AnnotateImageRequest.newBuilder().addAllFeatures(
             listOf(
@@ -26,7 +22,11 @@ class GoogleProvider : Provider {
                 Feature.newBuilder().setType(Feature.Type.OBJECT_LOCALIZATION).build()
             )
         ).setImage(img).build()
-        return vision.batchAnnotateImages(listOf(request)).responsesList
+        return processResponse(vision.batchAnnotateImages(listOf(request)), image.width, image.height)
+    }
+
+    private fun processResponse(response: BatchAnnotateImagesResponse, width: Int, height: Int): List<DetectedObject> =
+        response.responsesList
             .flatMap { annotateImageResponse -> annotateImageResponse.localizedObjectAnnotationsList }
             .map { localizedObjectAnnotation ->
                 DetectedObject(
@@ -42,7 +42,6 @@ class GoogleProvider : Provider {
                     )
                 )
             }
-    }
 
     override fun detectText(file: MultipartFile): List<DetectedObject> {
         val image = ImageIO.read(file.inputStream)
@@ -88,7 +87,11 @@ class GoogleProvider : Provider {
             }
     }
 
-    private fun getBoundingRectangle(normalizedVertexes: List<NormalizedVertex>, width: Int, height: Int): BoundingRectangle {
+    private fun getBoundingRectangle(
+        normalizedVertexes: List<NormalizedVertex>,
+        width: Int,
+        height: Int
+    ): BoundingRectangle {
         val maxX = normalizedVertexes.map { it.x * width }.maxOf { it }
         val minX = normalizedVertexes.map { it.x * width }.minOf { it }
         val maxY = normalizedVertexes.map { it.y * height }.maxOf { it }
@@ -103,7 +106,11 @@ class GoogleProvider : Provider {
         )
     }
 
-    private fun getBoundingRectangleFromVertixes(normalizedVertexes: List<Vertex>, width: Int, height: Int): BoundingRectangle {
+    private fun getBoundingRectangleFromVertixes(
+        normalizedVertexes: List<Vertex>,
+        width: Int,
+        height: Int
+    ): BoundingRectangle {
         val maxX = normalizedVertexes.map { it.x }.maxOf { it }
         val minX = normalizedVertexes.map { it.x }.minOf { it }
         val maxY = normalizedVertexes.map { it.y }.maxOf { it }

@@ -16,9 +16,6 @@ import org.springframework.web.multipart.MultipartFile
 
 
 class MlServicesProvider(private val restTemplate: RestTemplate) : Provider {
-    override fun detectObjects(file: MultipartFile): List<DetectedObject> {
-        TODO("Not yet implemented")
-    }
 
     override fun detectText(file: MultipartFile): List<DetectedObject> {
         val headers = HttpHeaders()
@@ -33,7 +30,15 @@ class MlServicesProvider(private val restTemplate: RestTemplate) : Provider {
             requestEntity,
             object : ParameterizedTypeReference<List<MLServicesModel>>() {}
         ).body!!
-        return model.map { mlServicesModel ->
+        return processResponse(model)
+    }
+
+    override fun detectObjects(file: MultipartFile): List<DetectedObject> {
+        TODO("Not yet implemented")
+    }
+
+    private fun processResponse(list: List<MLServicesModel>) =
+        list.map { mlServicesModel ->
             val coordinatesList = mlServicesModel.coordinates
                 .map { coordinates -> Coordinate(coordinates[0].toInt(), coordinates[1].toInt()) }
             DetectedObject(
@@ -44,7 +49,6 @@ class MlServicesProvider(private val restTemplate: RestTemplate) : Provider {
                 )
             )
         }
-    }
 
     override fun detectFace(file: MultipartFile): List<DetectedObject> {
         TODO("Not yet implemented")
